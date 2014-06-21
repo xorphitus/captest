@@ -7,8 +7,7 @@ RUN yum install -y git vi
 
 # Activate as ssh server
 RUN yum install -y openssh-server
-RUN echo 'root:hogehoge9' | chpasswd
-CMD service sshd start
+RUN service sshd start
 
 # Install packages for building ruby
 RUN yum install -y openssl-devel tar gcc
@@ -49,4 +48,15 @@ RUN echo '   ServerName 127.0.0.1'                       >> /etc/httpd/conf.d/pa
 RUN echo '   DocumentRoot /var/www/myapp/current/public' >> /etc/httpd/conf.d/passenger.conf
 RUN echo '</VirtualHost>'                                >> /etc/httpd/conf.d/passenger.conf
 
-CMD service httpd start
+RUN service httpd start
+
+# Install packages for gems
+RUN yum install -y sqlite-devel
+
+# Stand by for deploy
+RUN groupadd deploy
+RUN useradd deploy -g deploy
+RUN echo 'deploy:hogehoge9' | chpasswd
+RUN mkdir /var/www/myapp
+RUN chown deploy /var/www/myapp
+RUN chgrp deploy /var/www/myapp
